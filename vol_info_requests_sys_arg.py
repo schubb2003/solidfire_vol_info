@@ -47,7 +47,6 @@ headers = {
     'Content-Type': "application/json",
     'Authorization': "Basic %s" % basicAuth,
     'Cache-Control': "no-cache",
-    'Postman-Token': "9342e2d1-27e3-72d5-a013-3860fc12d514"
     }
 
 response = requests.request("POST", url, data=payload, headers=headers, verify=False)
