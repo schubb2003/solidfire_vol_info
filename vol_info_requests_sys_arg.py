@@ -28,6 +28,7 @@ auth = (user_name + ":" + user_pass)
 encodeKey = base64.b64encode(auth.encode('utf-8'))
 basicAuth = bytes.decode(encodeKey)
 
+# Be certain of your API version path here
 url = "https://" + mvip_ip + "/json-rpc/9.0"
 
 # Various payload params in one liner

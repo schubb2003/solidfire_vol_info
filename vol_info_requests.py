@@ -18,7 +18,8 @@ auth = ("admin:Netapp1!")
 encodeKey = base64.b64encode(auth.encode('utf-8'))
 basicAuth = bytes.decode(encodeKey)
 
-url = "https://sf-mvip/json-rpc/9.0"
+# Be certain of your API version path here
+url = "https://" + mvip_ip + "/json-rpc/9.0"
 
 # Various payload params in one liner
 # payload = "{\n\t\"method\": \"ListVolumes\",\n    \"params\": {\n        \"volumeIDs\": [<A list of volumeIDs>],\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"isPaired\": <Return paired volumes: true, Return unpaired volumes: false>,\n        \"volumeStatus\": \"<creating, snapshotting, active, or deleted>\",\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"includeVirtualVolumes\": <Boolean true or false>\n    },\n    \"id\": 1\n}"
