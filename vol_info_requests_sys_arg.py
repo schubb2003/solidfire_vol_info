@@ -24,34 +24,38 @@ user_name = sys.argv[2]
 user_pass = sys.argv[3]
 vol_id = sys.argv[4]
 
-# Web/REST auth credentials build authentication
-auth = (user_name + ":" + user_pass)
-encodeKey = base64.b64encode(auth.encode('utf-8'))
-basicAuth = bytes.decode(encodeKey)
+def main():
+    # Web/REST auth credentials build authentication
+    auth = (user_name + ":" + user_pass)
+    encodeKey = base64.b64encode(auth.encode('utf-8'))
+    basicAuth = bytes.decode(encodeKey)
 
-# Be certain of your API version path here
-url = "https://" + mvip_ip + "/json-rpc/9.0"
+    # Be certain of your API version path here
+    url = "https://" + mvip_ip + "/json-rpc/9.0"
 
-# Various payload params in one liner
-# payload = "{\n\t\"method\": \"ListVolumes\",\n    \"params\": {\n        \"volumeIDs\": [<A list of volumeIDs>],\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"isPaired\": <Return paired volumes: true, Return unpaired volumes: false>,\n        \"volumeStatus\": \"<creating, snapshotting, active, or deleted>\",\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"includeVirtualVolumes\": <Boolean true or false>\n    },\n    \"id\": 1\n}"
+    # Various payload params in one liner
+    # payload = "{\n\t\"method\": \"ListVolumes\",\n    \"params\": {\n        \"volumeIDs\": [<A list of volumeIDs>],\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"isPaired\": <Return paired volumes: true, Return unpaired volumes: false>,\n        \"volumeStatus\": \"<creating, snapshotting, active, or deleted>\",\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"includeVirtualVolumes\": <Boolean true or false>\n    },\n    \"id\": 1\n}"
 
-# payload in JSON multi-line
-payload = "{" + \
-                "\n  \"method\": \"ListVolumes\"," + \
-                "\n    \"params\": {" + \
-                "\n    \t\"volumeIDs\": [" + str(vol_id) + "]" + \
-                "\n    }," + \
-                "\n    \"id\": 1" + \
-            "\n}"
+    # payload in JSON multi-line
+    payload = "{" + \
+                    "\n  \"method\": \"ListVolumes\"," + \
+                    "\n    \"params\": {" + \
+                    "\n    \t\"volumeIDs\": [" + str(vol_id) + "]" + \
+                    "\n    }," + \
+                    "\n    \"id\": 1" + \
+                "\n}"
 
-headers = {
-    'Content-Type': "application/json",
-    'Authorization': "Basic %s" % basicAuth,
-    'Cache-Control': "no-cache",
-    }
+    headers = {
+        'Content-Type': "application/json",
+        'Authorization': "Basic %s" % basicAuth,
+        'Cache-Control': "no-cache",
+        }
 
-response = requests.request("POST", url, data=payload, headers=headers, verify=False)
+    response = requests.request("POST", url, data=payload, headers=headers, verify=False)
 
-raw = json.loads(response.text)
+    raw = json.loads(response.text)
 
-print(json.dumps(raw, indent=4, sort_keys=True))
+    print(json.dumps(raw, indent=4, sort_keys=True))
+
+if __name__ == "__main__":
+    main()
