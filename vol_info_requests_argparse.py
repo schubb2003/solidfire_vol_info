@@ -16,15 +16,15 @@ from solidfire.factory import ElementFactory
 from solidfire.models import QoS
 
 parser = argparse.ArgumentParser()
-parser.add_argument('-m', type=str,
+parser.add_argument('-sm', type=str,
                     required=True,
                     metavar='mvip',
                     help='MVIP/node name or IP')
-parser.add_argument('-u', type=str,
+parser.add_argument('-su', type=str,
                     required=True,
                     metavar='username',
                     help='username to connect with')
-parser.add_argument('-p', type=str,
+parser.add_argument('-sp', type=str,
                     required=True,
                     metavar='password',
                     help='password for user')
@@ -34,9 +34,9 @@ parser.add_argument('-v', type=str,
                     help='volume ID or comma separated list of IDs to return')
 args = parser.parse_args()
 
-mvip_ip = args.m
-user_name = args.u
-user_pass = args.p
+mvip_ip = args.sm
+user_name = args.su
+user_pass = args.sp
 vol_id = args.v
 
 def main():
