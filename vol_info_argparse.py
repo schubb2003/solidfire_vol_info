@@ -11,27 +11,30 @@ from solidfire.factory import ElementFactory
 # it is not required to get/print QoS information
 from solidfire.models import QoS
 
-# Set vars for connectivity using argparse
-parser = argparse.ArgumentParser()
-parser.add_argument('-sm', type=str,
-                    required=True,
-                    metavar='mvip',
-                    help='MVIP/node name or IP')
-parser.add_argument('-su', type=str,
-                    required=True,
-                    metavar='username',
-                    help='username to connect with')
-parser.add_argument('-sp', type=str,
-                    required=True,
-                    metavar='password',
-                    help='password for user')
-args = parser.parse_args()
+def get_inputs():
+    # Set vars for connectivity using argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-sm', type=str,
+                        required=True,
+                        metavar='mvip',
+                        help='MVIP/node name or IP')
+    parser.add_argument('-su', type=str,
+                        required=True,
+                        metavar='username',
+                        help='username to connect with')
+    parser.add_argument('-sp', type=str,
+                        required=True,
+                        metavar='password',
+                        help='password for user')
+    args = parser.parse_args()
 
-mvip_ip = args.sm
-user_name = args.su
-user_pass = args.sp
+    mvip_ip = args.sm
+    user_name = args.su
+    user_pass = args.sp
+    
+    return mvip_ip, user_name, user_pass
 
-def main():
+def main(mvip_ip, user_name, user_pass):
     # Use ElementFactory to get a SolidFireElement object.
     sfe = ElementFactory.create(mvip_ip, user_name, user_pass)
 
@@ -80,4 +83,5 @@ def main():
         # volume_uuid=None)	
 
 if __name__ == "__main__":
-    main()
+    mvip_ip, user_name, user_pass = get_inputs()
+    main(mvip_ip, user_name, user_pass)

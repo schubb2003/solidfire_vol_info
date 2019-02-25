@@ -15,38 +15,51 @@ from solidfire.factory import ElementFactory
 # it is not required to get/print QoS information
 from solidfire.models import QoS
 
-parser = argparse.ArgumentParser()
-parser.add_argument('-sm', type=str,
-                    required=True,
-                    metavar='mvip',
-                    help='MVIP/node name or IP')
-parser.add_argument('-su', type=str,
-                    required=True,
-                    metavar='username',
-                    help='username to connect with')
-parser.add_argument('-sp', type=str,
-                    required=True,
-                    metavar='password',
-                    help='password for user')
-parser.add_argument('-v', type=str,
-                    required=True,
-                    metavar='vol_id',
-                    help='volume ID or comma separated list of IDs to return')
-args = parser.parse_args()
+def get_inputs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-sm', type=str,
+                        required=True,
+                        metavar='mvip',
+                        help='MVIP/node name or IP')
+    parser.add_argument('-su', type=str,
+                        required=True,
+                        metavar='username',
+                        help='username to connect with')
+    parser.add_argument('-sp', type=str,
+                        required=True,
+                        metavar='password',
+                        help='password for user')
+    parser.add_argument('-v', type=str,
+                        required=True,
+                        metavar='vol_id',
+                        help='volume ID or comma separated list of IDs to return')
+    args = parser.parse_args()
 
-mvip_ip = args.sm
-user_name = args.su
-user_pass = args.sp
-vol_id = args.v
-
-def main():
-    # Web/REST auth credentials build authentication
+    mvip_ip = args.sm
+    user_name = args.su
+    user_pass = args.sp
+    vol_id = args.v
+    return mvip_ip, user_name, user_pass, vol_id
+    
+def build_auth():
     auth = (user_name + ":" + user_pass)
     encodeKey = base64.b64encode(auth.encode('utf-8'))
     basicAuth = bytes.decode(encodeKey)
 
     # Be certain of your API version path here
     url = "https://" + mvip_ip + "/json-rpc/9.0"
+    
+        headers = {
+        'Content-Type': "application/json",
+        'Authorization': "Basic %s" % basicAuth,
+        'Cache-Control': "no-cache",
+        }
+
+    return headers, url
+
+def main(headers, url vol_id):
+    # Web/REST auth credentials build authentication
+
 
     # Various payload params in one liner
     # payload = "{\n\t\"method\": \"ListVolumes\",\n    \"params\": {\n        \"volumeIDs\": [<A list of volumeIDs>],\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"isPaired\": <Return paired volumes: true, Return unpaired volumes: false>,\n        \"volumeStatus\": \"<creating, snapshotting, active, or deleted>\",\n        \"volumeName\": \"<Optional Volume Name>\",\n        \"includeVirtualVolumes\": <Boolean true or false>\n    },\n    \"id\": 1\n}"
@@ -60,12 +73,6 @@ def main():
                     "\n    \"id\": 1" + \
                 "\n}"
 
-    headers = {
-        'Content-Type': "application/json",
-        'Authorization': "Basic %s" % basicAuth,
-        'Cache-Control': "no-cache",
-        }
-
     response = requests.request("POST", url, data=payload, headers=headers, verify=False)
 
     raw = json.loads(response.text)
@@ -73,4 +80,6 @@ def main():
     print(json.dumps(raw, indent=4, sort_keys=True))
 
 if __name__ == "__main__":
-    main()
+    mvip_ip, user_name, user_pass, vol_id = get_inputs()
+    header, url = buil(mvip_ip, user_name, user_pass)
+    main(headers, url, vol_id)
