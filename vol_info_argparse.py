@@ -14,36 +14,48 @@ from solidfire.models import QoS
 def get_inputs():
     # Set vars for connectivity using argparse
     parser = argparse.ArgumentParser()
-    parser.add_argument('-sm', type=str,
+    parser.add_argument('-m', type=str,
                         required=True,
                         metavar='mvip',
                         help='MVIP/node name or IP')
-    parser.add_argument('-su', type=str,
+    parser.add_argument('-u', type=str,
                         required=True,
                         metavar='username',
                         help='username to connect with')
-    parser.add_argument('-sp', type=str,
+    parser.add_argument('-p', type=str,
                         required=True,
                         metavar='password',
                         help='password for user')
+    parser.add_argument('-v', type=int,
+                        required=False,
+                        metavar='vol_id',
+                        help='volume ID')                        
     args = parser.parse_args()
 
-    mvip_ip = args.sm
-    user_name = args.su
-    user_pass = args.sp
+    mvip_ip = args.m
+    user_name = args.u
+    user_pass = args.p
+    vol_id = args.v
     
-    return mvip_ip, user_name, user_pass
+    return mvip_ip, user_name, user_pass, vol_id
 
-def main(mvip_ip, user_name, user_pass):
-    # Use ElementFactory to get a SolidFireElement object.
+def connect_cluster(mvip_ip, user_name, user_pass):
+   # Use ElementFactory to get a SolidFireElement object.
     sfe = ElementFactory.create(mvip_ip, user_name, user_pass)
-
+    return sfe
+    
+def get_vol_info(sfe, vol_id):
+    print(vol_id)
     # This script returns information on volume ID 1, remove 
     # the volume ID to return all volumes
     list_volumes_result = sfe.list_volumes()
     for volume in list_volumes_result.volumes:
-        if volume.volume_id == 1:
-            print(volume.name,volume.qos.max_iops)
+        if vol_id == None:
+            print(volume.name, volume.qos.max_iops)
+        else:
+            if volume.volume_id == vol_id:
+                print(volume.name, volume.qos.max_iops)
+            
 
     # Printable outputs
         # print(volume.access) will print the access type of the volume
@@ -82,6 +94,11 @@ def main(mvip_ip, user_name, user_pass):
         # volume_pairs='[]', 
         # volume_uuid=None)	
 
+def main():
+    mvip_ip, user_name, user_pass, vol_id = get_inputs()
+    sfe = connect_cluster(mvip_ip, user_name, user_pass)
+    get_vol_info(sfe, vol_id)
+
 if __name__ == "__main__":
-    mvip_ip, user_name, user_pass = get_inputs()
-    main(mvip_ip, user_name, user_pass)
+    main()
+    
