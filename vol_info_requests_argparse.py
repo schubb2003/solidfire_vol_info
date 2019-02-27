@@ -17,15 +17,15 @@ from solidfire.models import QoS
 
 def get_inputs():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-sm', type=str,
+    parser.add_argument('-m', type=str,
                         required=True,
                         metavar='mvip',
                         help='MVIP/node name or IP')
-    parser.add_argument('-su', type=str,
+    parser.add_argument('-u', type=str,
                         required=True,
                         metavar='username',
                         help='username to connect with')
-    parser.add_argument('-sp', type=str,
+    parser.add_argument('-p', type=str,
                         required=True,
                         metavar='password',
                         help='password for user')
@@ -35,13 +35,14 @@ def get_inputs():
                         help='volume ID or comma separated list of IDs to return')
     args = parser.parse_args()
 
-    mvip_ip = args.sm
-    user_name = args.su
-    user_pass = args.sp
+    mvip_ip = args.m
+    user_name = args.u
+    user_pass = args.p
     vol_id = args.v
+    
     return mvip_ip, user_name, user_pass, vol_id
     
-def build_auth():
+def build_auth(mvip_ip, user_name, user_pass):
     auth = (user_name + ":" + user_pass)
     encodeKey = base64.b64encode(auth.encode('utf-8'))
     basicAuth = bytes.decode(encodeKey)
@@ -49,7 +50,7 @@ def build_auth():
     # Be certain of your API version path here
     url = "https://" + mvip_ip + "/json-rpc/9.0"
     
-        headers = {
+    headers = {
         'Content-Type': "application/json",
         'Authorization': "Basic %s" % basicAuth,
         'Cache-Control': "no-cache",
@@ -57,7 +58,7 @@ def build_auth():
 
     return headers, url
 
-def main(headers, url vol_id):
+def get_vol_info(headers, url, vol_id):
     # Web/REST auth credentials build authentication
 
 
@@ -79,7 +80,10 @@ def main(headers, url vol_id):
 
     print(json.dumps(raw, indent=4, sort_keys=True))
 
-if __name__ == "__main__":
+def main():
     mvip_ip, user_name, user_pass, vol_id = get_inputs()
-    header, url = buil(mvip_ip, user_name, user_pass)
-    main(headers, url, vol_id)
+    headers, url = build_auth(mvip_ip, user_name, user_pass)
+    get_vol_info(headers, url, vol_id)
+
+if __name__ == "__main__":
+    main()
